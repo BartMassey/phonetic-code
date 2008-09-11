@@ -85,11 +85,11 @@ soundex nara = filter (/= '?')
       --- correctly predicted by STTS (ref above)!
       encode "" = "0"
       encode as@(a : _) = (a :)
-                        . tail
+                        . drop 1
                         . filter_multiples
                         . narify
                         . map unsound $ as
-      unsound c | isAlpha c = soundexCodes ! c
+      unsound c | c >= 'A' && c <= 'Z' = soundexCodes ! c
       unsound _ = '?'
 
 soundex_truncated nara = take 4 . (++ repeat '0') . soundex nara
