@@ -18,17 +18,38 @@
 --- with other words.  I allow it to do arbitrary-length
 --- codes instead of length 4 by default, to get better accuracy.
 
+import System.IO
 import System.Console.ParseArgs
 import Data.Soundex
 
-data ArgIndex = ArgWord deriving (Eq, Ord, Show)
+data ArgIndex = ArgWord
+              | ArgDict
+                deriving (Eq, Ord, Show)
 
-argd = [ Arg { argIndex =ArgWord,
+argd = [ Arg { argIndex = ArgDict,
+               argName = Just "dictionary",
+               argAbbr = Just 'd',
+               argData = argDataDefaulted "path" ArgtypeString
+                           "/usr/share/dict/words",
+               argDesc = "Dictionary file to search" },
+         Arg { argIndex = ArgWord,
                argName = Nothing,
                argAbbr = Nothing,
                argData = argDataRequired "word" ArgtypeString,
                argDesc = "Word to be looked up." } ]
 
+try_word word = unlines
+              . map snd
+              . filter ((== sf word) . fst)
+              . map sfs
+              . lines
+    where
+      sf = soundex True
+      sfs w = (sf w, w)
+
 main = do
   args <- parseArgsIO ArgsComplete argd
-  print $ soundex True (getRequiredArg args ArgWord)
+  h <- argFileOpener (getRequiredArg args ArgDict) ReadMode 
+  dict <- hGetContents h
+  let word = getRequiredArg args ArgWord
+  putStr $ try_word word dict
