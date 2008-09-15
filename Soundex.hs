@@ -107,13 +107,25 @@ soundexSimple = soundex_truncated False
 soundexNARA :: String -> String
 soundexNARA = soundex_truncated True
 
---- Some tests from the web that this software passes:
---  and [
+--- Some tests from the web and from Knuth that this
+--- software passes.
+---
+-- soundexTest = and [
 --    soundexSimple "Lloyd" == "L300",
---    soundexSimple "WOOLCOCK" == "W422",
---    soundexSimple "DONNELL" == "D540",
---    soundexSimple "BARAGWANATH" == "B625",
---    soundexSimple "WILLIAMS" == "W452",
+--    soundexSimple "Woolcock" == "W422",
+--    soundexSimple "Donnell" == "D540",
+--    soundexSimple "Baragwanath" == "B625",
+--    soundexSimple "Williams" == "W452",
 --    soundexSimple "Ashcroft" == "A226",
---    soundexNARA "Ashcroft" == "A261"]
-                                                                                                                 
+--    soundexNARA   "Ashcroft" == "A261",
+--    soundexSimple "Euler" == "E460",
+--    soundexSimple "Ellery" == "E460",
+--    soundexSimple "Gauss" == "G200",
+--    soundexSimple "Ghosh" == "G200",
+--    soundexSimple "Hilbert" == "H416",
+--    soundexSimple "Heilbronn" == "H416",
+--    soundexSimple "Knuth" == "K530",
+--    soundexSimple "Kant" == "K530",
+--    soundexSimple "Ladd" == "L300",
+--    soundexSimple "Lukasiewicz" == "L222",
+--    soundexSimple "Lissajous" == "L222"]
