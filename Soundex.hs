@@ -24,8 +24,8 @@
 --- BSD License".  Please see the file COPYING provided with
 --- this distribution for license terms.
 
-module Data.Soundex (soundexCodes, soundex,
-                     soundexSimple, soundexNARA)
+module Text.PhoneticCode.Soundex (soundexCodes, soundex,
+                                  soundexSimple, soundexNARA)
 where
 
 import Data.List

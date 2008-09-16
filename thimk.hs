@@ -20,7 +20,7 @@
 
 import System.IO
 import System.Console.ParseArgs
-import Data.PhoneticCode.Soundex
+import Text.PhoneticCode.Soundex
 
 data ArgIndex = ArgWord
               | ArgDict

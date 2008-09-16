@@ -13,7 +13,7 @@
 --- BSD License".  Please see the file COPYING provided with
 --- this distribution for license terms.
 
-module Data.PhoneticCode.Phonix
+module Text.PhoneticCode.Phonix
 where
 
 import Data.List
