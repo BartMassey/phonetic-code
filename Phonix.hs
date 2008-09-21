@@ -13,7 +13,11 @@
 --- BSD License".  Please see the file COPYING provided with
 --- this distribution for license terms.
 
-module Text.PhoneticCode.Phonix
+-- |Phonix codes (Gadd 1990) augment slightly improved Soundex codes
+--  with a preprocessing step for cleaning up certain n-grams.  Since
+--  the preprocessing step contains more than 150 rules processed by
+--  a slow custom-written scanner, this implementation is not too fast.
+module Text.PhoneticCode.Phonix (phonix, phonixCodes, phonixRules)
 where
 
 import Data.List
