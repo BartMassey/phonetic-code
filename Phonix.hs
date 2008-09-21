@@ -2,13 +2,6 @@
 --- Copyright © 2008 Bart Massey
 --- ALL RIGHTS RESERVED
 
---- Based on the CPAN Phonix code calculator
---- Text::Phonetic::Phonix.pm, because the paper describing
---- the codes is not freely available and I'm lazy.
---- Also because Phonix involves over 150 substitution rules,
---- I transformed the Perl ones, which was easier than
---- generating them from scratch.
-
 --- This software is licensed under the "3-clause ('new')
 --- BSD License".  Please see the file COPYING provided with
 --- this distribution for license terms.
@@ -17,6 +10,16 @@
 --  with a preprocessing step for cleaning up certain n-grams.  Since
 --  the preprocessing step contains more than 150 rules processed by
 --  a slow custom-written scanner, this implementation is not too fast.
+-- 
+-- This code was based on a number of sources, including
+-- the CPAN Phonix code calculator
+-- Text::Phonetic::Phonix.pm . Because the paper describing
+-- the codes is not freely available and I'm lazy, I did not use
+-- it as a reference.
+-- Also because Phonix involves over 150 substitution rules,
+-- I transformed the Perl ones, which was easier than
+-- generating them from scratch.
+
 module Text.PhoneticCode.Phonix (phonix, phonixCodes, phonixRules)
 where
 

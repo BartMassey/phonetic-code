@@ -2,30 +2,36 @@
 --- Copyright © 2008 Bart Massey
 --- ALL RIGHTS RESERVED
 
---- Based on description of soundex at
----   http://wikipedia.org/wiki/Soundex
---- and in Knuth's "The Art of Computer Programming" 2nd ed
---- v1 pp394-395.  A very helpful reference on the details
---- and differences among soundex algorithms is "Soundex:
---- The True Story",
----   http://west-penwith.org.uk/misc/soundex.htm
---- accessed 11 September 2008.
-
---- Originally written for the "thimk" spelling suggestion
---- application in Nickle (http://nickle.org) in July 2002
---- based on a description from
----   http://www.geocities.com/Heartland/Hills/3916/soundex.html
---- which is now
----   http://www.searchforancestors.com/soundex.html
---- Ported September 2008; the other variants were also
---- added at this time.
-
 --- This software is licensed under the "3-clause ('new')
 --- BSD License".  Please see the file COPYING provided with
 --- this distribution for license terms.
 
-module Text.PhoneticCode.Soundex (soundexCodes, soundex,
-                                  soundexSimple, soundexNARA)
+-- |Soundex is a phonetic coding algorithm.
+--  It transforms word into a similarity hash based on an
+--  approximation of its sounds.  Thus, similar-sounding
+--  words tend to have the same hash.
+--
+--  This implementation is based on a number of sources,
+--  including a description of soundex at
+--    http://wikipedia.org/wiki/Soundex
+--  and in Knuth's "The Art of Computer Programming" 2nd ed
+--  v1 pp394-395.  A very helpful reference on the details
+--  and differences among soundex algorithms is "Soundex:
+--  The True Story",
+--    http://west-penwith.org.uk/misc/soundex.htm
+--  accessed 11 September 2008.
+--
+--  This code was originally written for the "thimk" spelling suggestion
+--  application in Nickle (http://nickle.org) in July 2002
+--  based on a description from
+--    http://www.geocities.com/Heartland/Hills/3916/soundex.html
+--  which is now
+--    http://www.searchforancestors.com/soundex.html
+--  The code was ported September 2008; the Soundex variants were also
+--  added at this time.
+
+module Text.PhoneticCode.Soundex (soundex, soundexSimple,
+                                  soundexNARA, soundexCodes)
 where
 
 import Data.List
@@ -33,11 +39,11 @@ import Data.Char
 import Data.Array.IArray
 import Data.Maybe
 
--- | Array of soundex codes for single characters.  The
--- array maps uppercase letters (only) to a character
--- representing a code in the range ['1'..'7'] or '?'.  Code
--- '7' is returned as a coding convenience for
--- American/Miracode/NARA/Knuth soundex.
+-- |Array of soundex codes for single characters.  The
+--  array maps uppercase letters (only) to a character
+--  representing a code in the range ['1'..'7'] or '?'.  Code
+--  '7' is returned as a coding convenience for
+--  American/Miracode/NARA/Knuth soundex.
 
 soundexCodes :: Array Char Char
 soundexCodes = accumArray updater '?' ('A', 'Z') codes where
