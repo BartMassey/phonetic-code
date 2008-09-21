@@ -23,4 +23,4 @@ category: Text, Natural Language Processing
 tested-with: GHC == 6.8.2
 
 exposed-modules: Text.PhoneticCode.Soundex, Text.PhoneticCode.Phonix
-build-depends: base, containers
+build-depends: base, containers, array
