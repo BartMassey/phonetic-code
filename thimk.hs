@@ -6,7 +6,12 @@
 --- BSD License".  Please see the file COPYING provided with
 --- this distribution for license terms.
 
--- |The idea and name for thimk came from an old program that used to hang
+-- |"thimk" (an old joke) is a command-line spelling word
+--  suggestion tool.  You give it a possibly-misspelled word,
+--  and it spits out one or more properly-spelled words in order
+--  of likelihood of similarity.
+-- 
+--  The idea and name for thimk came from an old program that used to hang
 --  around Reed College, probably written by Graham Ross and
 --  now apparently lost in the mists of time.
 --  See
