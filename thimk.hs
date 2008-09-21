@@ -6,17 +6,26 @@
 --- BSD License".  Please see the file COPYING provided with
 --- this distribution for license terms.
 
---- Idea and name from an old program that used to hang
---- around Reed College, probably written by Graham Ross and
---- now apparently lost in the mists of time.
---- See
----   http://groups.google.com/group/net.sources/msg/8856593862fe22bd
---- for the one very vague reference I've found on the web (in the
---- SEE ALSO section of the referenced manpage).
-
---- Soundex is designed for names, but seems to work about the same
---- with other words.  I allow it to do arbitrary-length
---- codes instead of length 4 by default, to get better accuracy.
+-- |The idea and name for thimk came from an old program that used to hang
+--  around Reed College, probably written by Graham Ross and
+--  now apparently lost in the mists of time.
+--  See
+--    http://groups.google.com/group/net.sources/msg/8856593862fe22bd
+--  for the one very vague reference I've found on the web (in the
+--  SEE ALSO section of the referenced manpage).
+-- 
+--  The current implementation is a bit more sophisticated
+--  than I recall the original being. By
+--  default it uses a prefilter that discards words with
+--  large edit distances from the target, then filters words
+--  with a different phonetic code than the target, then
+--  presents the top 5 results sorted by edit distance.
+-- 
+--  The Soundex and Phonix phonetic codes are designed for
+--  names, but seem to work about the same with other words.
+--  I follow the common practice of not truncating the codes
+--  for greater precision, although Phonix does truncate its
+--  final "sound" for greater recall.
 
 import System.IO
 import Data.List
@@ -45,17 +54,17 @@ argd = [ Arg { argIndex = ArgDict,
                argAbbr = Just 'c',
                argData = argDataDefaulted "phonetic-code" ArgtypeString
                            "phonix",
-               argDesc = "Phonetic code: soundex, phonix"},
+               argDesc = "Phonetic code: one of soundex, phonix"},
          Arg { argIndex = ArgNoPrefilter,
                argName = Just "no-distance-prefilter",
                argAbbr = Nothing,
                argData = Nothing,
-               argDesc = "Do not throw away wildly misspelled words before looking further."},
+               argDesc = "Do not discard wildly misspelled words early"},
          Arg { argIndex = ArgWord,
                argName = Nothing,
                argAbbr = Nothing,
                argData = argDataRequired "word" ArgtypeString,
-               argDesc = "Word to be looked up." } ]
+               argDesc = "Word to be looked up" } ]
 
 edit_distance s t =
     restrictedDamerauLevenshteinDistance ec s t where
