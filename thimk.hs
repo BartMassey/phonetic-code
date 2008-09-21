@@ -19,7 +19,7 @@
 --  default it uses a prefilter that discards words with
 --  large edit distances from the target, then filters words
 --  with a different phonetic code than the target, then
---  presents the top 5 results sorted by edit distance.
+--  presents the top result sorted by edit distance.
 -- 
 --  The Soundex and Phonix phonetic codes are designed for
 --  names, but seem to work about the same with other words.
@@ -41,6 +41,7 @@ data ArgIndex = ArgWord
               | ArgCode
               | ArgNoPrefilter
               | ArgDict
+              | ArgChoices
                 deriving (Eq, Ord, Show)
 
 argd = [ Arg { argIndex = ArgDict,
@@ -55,6 +56,11 @@ argd = [ Arg { argIndex = ArgDict,
                argData = argDataDefaulted "phonetic-code" ArgtypeString
                            "phonix",
                argDesc = "Phonetic code: one of soundex, phonix"},
+         Arg { argIndex = ArgChoices,
+               argName = Nothing,
+               argAbbr = Just 'n',
+               argData = argDataDefaulted "choices" ArgtypeInt 1,
+               argDesc = "Max number of choices to offer"},
          Arg { argIndex = ArgNoPrefilter,
                argName = Just "no-distance-prefilter",
                argAbbr = Nothing,
@@ -74,9 +80,9 @@ edit_distance s t =
                transpositionCost = 1,
                substitutionCost = 3 }
 
-try_word :: Bool -> (String -> String) -> String -> String -> String
-try_word prefilter pcode word = unlines
-              . take 5
+try_word :: Bool -> (String -> String) -> Int -> String -> String -> String
+try_word prefilter pcode choices word = unlines
+              . take choices
               . sortBy (comparing ed)
               . map snd
               . filter ((== pcode word) . fst)
@@ -98,5 +104,6 @@ main = do
                 c -> usageError args $ "unknown phonetic code " ++ c
   let prefilter = not (gotArg args ArgNoPrefilter)
   let word = getRequiredArg args ArgWord
-  let result = try_word prefilter pcode word dict
+  let choices = getRequiredArg args ArgChoices
+  let result = try_word prefilter pcode choices word dict
   putStr result
