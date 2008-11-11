@@ -20,7 +20,7 @@ description:
    words tend to have the same hash.
 
 category: Text, Natural Language Processing
-tested-with: GHC == 6.8.2
+tested-with: GHC == 6.8.3
 
 exposed-modules: Text.PhoneticCode.Soundex, Text.PhoneticCode.Phonix
 build-depends: base, containers, array
