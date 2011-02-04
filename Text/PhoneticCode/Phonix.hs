@@ -20,14 +20,16 @@
 -- I transformed the Perl ones, which was easier than
 -- generating them from scratch.
 
-module Text.PhoneticCode.Phonix (phonix, phonixCodes, phonixRules)
+module Text.PhoneticCode.Phonix (
+  phonix, phonixCodes, 
+  phonixRules, applyPhonixRules )
 where
 
 import Data.List
 import Data.Char
 import Data.Array.IArray
-import Data.Maybe
 import qualified Data.Set as Set
+import Text.Regex
 
 -- | Compute a "full" phonix code; i.e., do not drop any
 -- encodable characters from the result.  The leading
@@ -56,14 +58,11 @@ phonix :: String -> String
 phonix = filter (/= '?')
        . drop_trailing_sound
        . encode
-       . apply_rules
-       . map toUpper
-       . dropWhile (not . isAlpha)
+       . applyPhonixRules
     where
       drop_trailing_sound = init . concatMap question_squash . group where
           question_squash ('?' : _) = ['?']
           question_squash l = l
-      apply_rules w = foldl' (flip $ uncurry gSubst) w phonixRules
       filter_multiples = map head . group
       encode "" = "0"
       encode as@(a : _) = (devowel a :)
@@ -77,49 +76,6 @@ phonix = filter (/= '?')
 
 isVowely :: Char -> Bool
 isVowely c = c `Set.member` (Set.fromList "AEIOUY")
-
-isVowel :: Char -> Bool
-isVowel c = c `Set.member` (Set.fromList "AEIOU")
-
-globMatches :: Char -> Char -> Bool
-globMatches 'v' = isVowel
-globMatches 'c' = not . isVowel
-globMatches '.' = const True
-globMatches _ = const False
-
-isGlob :: Char -> Bool
-isGlob c = c `Set.member` (Set.fromList "vc.")
-
-matches :: Char -> Char -> Bool
-s `matches` t = s == t || s `globMatches` t
-
-subst :: String -> String -> String -> String
-subst "" _ _ = error "subst: bad pattern"
-subst _ _ "" = ""
-subst s d t
-    | length t < length s = t
-    | and (zipWith matches s t) = deglob ++ subst s d t'
-    | otherwise = skip
-    where
-      deglob = dn . d1 $ d where
-          d1 d0
-              | isGlob . head $ s = head t : d0
-              | otherwise = d0
-          dn d0
-              | isGlob . last $ s = d0 ++ [t !! (length s - 1)]
-              | otherwise = d0
-      t' = drop (length s) t
-      skip = head t : subst s d (tail t)
-
-gSubst :: String -> String -> String -> String
-gSubst "" _ _ = error "gSubst: bad pattern"
-gSubst s d t
-    | head s == '^' = let (t0, t1) = splitAt (length s - 1) t in
-                      subst (tail s) d t0 ++ t1
-    | last s == '$' = let (t0, t1) = splitAt (length t - length s + 1) t in
-                      t0 ++ subst (init s) d t1
-    | otherwise = subst s d t
-
 
 -- | Array of phonix codes for single characters.  The
 -- array maps uppercase letters (only) to a character
@@ -235,3 +191,44 @@ phonixRules = [
  ("MPTS","MPS"),
  ("MPS","MS"),
  ("MPT","MT") ]
+
+-- | Apply each of the Phonix preprocessing rules in turn to
+-- the target word returning the resulting accumulated
+-- substitution.
+applyPhonixRules :: String -> String
+applyPhonixRules = 
+  flip (foldl' res) phonixRulesREs .
+    map toUpper . 
+    dropWhile (not . isAlpha)
+  where
+    res target (pat, subst) = subRegex pat target subst
+
+-- List of pattern/substitution pairs built from the
+-- phonixRules .
+phonixRulesREs :: [(Regex, String)]
+phonixRulesREs =
+  map reFormat phonixRules
+  where
+    mre s = mkRegexWithOpts s False True
+    reFormat (src, dst) =
+      let vowelSubst = mre "v"
+          consSubst = mre "c"
+          dotSubst = mre "\\." in
+      let src' = flip (subRegex dotSubst) "\\([A-Z]\\)" $
+                 flip (subRegex consSubst) "\\([BCDFGHJKLMNPQRSTVWXYZ]\\)" $
+                 flip (subRegex vowelSubst) "\\([AEIOU]\\)" $
+                 src in
+      let front = 
+            case matchRegex (mre "^\\^?[^^A-Z]") src' of
+              Just _ -> "\\1"
+              Nothing -> ""
+              in
+      let back = 
+            case matchRegex (mre "[^A-Z$]\\$?$") src' of
+              Just _ -> 
+                case front of
+                  "" -> "\\1"
+                  _ -> "\\2"
+              Nothing -> ""
+              in
+      (mre src', front ++ dst ++ back)

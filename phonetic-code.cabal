@@ -1,5 +1,5 @@
 name: phonetic-code
-version: 0.1
+version: 0.1.1
 cabal-version: >= 1.2
 build-type: Simple
 license: BSD3
@@ -20,7 +20,11 @@ description:
    words tend to have the same hash.
 
 category: Text, Natural Language Processing
-tested-with: GHC == 6.8.3
+tested-with: GHC == 6.8.3, GHC == 6.12.1
 
 exposed-modules: Text.PhoneticCode.Soundex, Text.PhoneticCode.Phonix
-build-depends: base, containers, array
+build-depends: base >= 3 && < 5,
+	       containers >= 0.3 && < 1,
+	       array >= 0.3 && < 1,
+	       regex-compat >= 0.93 && < 2
+ghc-options: -Wall

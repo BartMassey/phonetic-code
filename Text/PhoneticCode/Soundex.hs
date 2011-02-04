@@ -37,7 +37,6 @@ where
 import Data.List
 import Data.Char
 import Data.Array.IArray
-import Data.Maybe
 
 -- |Array of soundex codes for single characters.  The
 --  array maps uppercase letters (only) to a character
@@ -98,6 +97,7 @@ soundex nara = filter (/= '?')
       unsound c | c >= 'A' && c <= 'Z' = soundexCodes ! c
       unsound _ = '?'
 
+soundex_truncated :: Bool -> String -> String
 soundex_truncated nara = take 4 . (++ repeat '0') . soundex nara
 
 --- | This is the simple variant of `soundex`.  It gives the
