@@ -79,9 +79,12 @@ isVowely c = c `Set.member` (Set.fromList "AEIOUY")
 isVowel :: Char -> Bool
 isVowel c = c `Set.member` (Set.fromList "AEIOU")
 
+isConsonant :: Char -> Bool
+isConsonant c = c `Set.member` (Set.fromList "BCDFGHJKLMNPQRSTVWXYZ")
+
 globMatches :: Char -> Char -> Bool
 globMatches 'v' = isVowel
-globMatches 'c' = not . isVowel
+globMatches 'c' = isConsonant
 globMatches '.' = const True
 globMatches _ = const False
 
