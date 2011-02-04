@@ -6,17 +6,17 @@
 --- BSD License".  Please see the file COPYING provided with
 --- this distribution for license terms.
 
--- |Phonix codes (Gadd 1990) augment slightly improved Soundex codes
---  with a preprocessing step for cleaning up certain n-grams.  Since
---  the preprocessing step contains more than 150 rules processed by
---  a slow custom-written scanner, this implementation is not too fast.
+-- | Phonix codes (Gadd 1990) augment slightly improved
+-- Soundex codes with a preprocessing step for cleaning up
+-- certain n-grams.  Since the preprocessing step contains
+-- around 90 rules processed by a slow custom-written
+-- scanner, this implementation is not too fast.
 -- 
--- This code was based on a number of sources, including
--- the CPAN Phonix code calculator
--- Text::Phonetic::Phonix.pm . Because the paper describing
--- the codes is not freely available and I'm lazy, I did not use
--- it as a reference.
--- Also because Phonix involves over 150 substitution rules,
+-- This code was based on a number of sources, including the
+-- CPAN Phonix code calculator `Text::Phonetic::Phonix.pm`. 
+-- Because the paper describing the codes is not freely
+-- available and I'm lazy, I did not use it as a reference.
+-- Also because Phonix involves around 90 substitution rules,
 -- I transformed the Perl ones, which was easier than
 -- generating them from scratch.
 
@@ -29,7 +29,6 @@ import Data.Array.IArray
 import Data.Maybe
 import qualified Data.Set as Set
 
-
 -- | Compute a "full" phonix code; i.e., do not drop any
 -- encodable characters from the result.  The leading
 -- character of the code will be folded to uppercase.
@@ -40,19 +39,19 @@ import qualified Data.Set as Set
 -- implemented on the web, and I'm too cheap and lazy to go
 -- find the original paper by Gadd (1990) that actually
 -- describes the original algorithm.  Thus, I am taking some
--- big guesses on intent here as I implement.
--- Corrections, especially those involving getting me a copy
--- of the article, are welcome.
+-- big guesses on intent here as I implement.  Corrections,
+-- especially those involving getting me a copy of the
+-- article, are welcome.
 --
--- Dropping the "trailing sound" seems to be
--- an integral part of Gadd's technique, but I'm not sure how
--- it is supposed to be done.  I am currently compressing runs
--- of vowels, and then dropping the trailing digit or vowel
+-- Dropping the "trailing sound" seems to be an integral
+-- part of Gadd's technique, but I'm not sure how it is
+-- supposed to be done.  I am currently compressing runs of
+-- vowels, and then dropping the trailing digit or vowel
 -- from the code.
 --
--- Another area of confusion is whether to compress strings of
--- the same code, as in Soundex, or merely strings of the same
--- consonant.  I have chosen the former.
+-- Another area of confusion is whether to compress strings
+-- of the same code, as in Soundex, or merely strings of the
+-- same consonant.  I have chosen the former.
 phonix :: String -> String
 phonix = filter (/= '?')
        . drop_trailing_sound
