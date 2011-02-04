@@ -243,4 +243,4 @@ applyPhonixRules :: String -> String
 applyPhonixRules = 
   flip (foldl' (flip $ uncurry gSubst)) phonixRules . 
     map toUpper . 
-    dropWhile (not . isAlpha)
+    filter isAlpha
