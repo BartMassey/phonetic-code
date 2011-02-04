@@ -20,13 +20,14 @@
 -- I transformed the Perl ones, which was easier than
 -- generating them from scratch.
 
-module Text.PhoneticCode.Phonix (phonix, phonixCodes, phonixRules)
+module Text.PhoneticCode.Phonix (
+  phonix, phonixCodes, 
+  phonixRules, applyPhonixRules )
 where
 
 import Data.List
 import Data.Char
 import Data.Array.IArray
-import Data.Maybe
 import qualified Data.Set as Set
 
 -- | Compute a "full" phonix code; i.e., do not drop any
@@ -56,14 +57,11 @@ phonix :: String -> String
 phonix = filter (/= '?')
        . drop_trailing_sound
        . encode
-       . apply_rules
-       . map toUpper
-       . dropWhile (not . isAlpha)
+       . applyPhonixRules
     where
       drop_trailing_sound = init . concatMap question_squash . group where
           question_squash ('?' : _) = ['?']
           question_squash l = l
-      apply_rules w = foldl' (flip $ uncurry gSubst) w phonixRules
       filter_multiples = map head . group
       encode "" = "0"
       encode as@(a : _) = (devowel a :)
@@ -235,3 +233,11 @@ phonixRules = [
  ("MPTS","MPS"),
  ("MPS","MS"),
  ("MPT","MT") ]
+
+-- | Apply each of the Phonix preprocessing rules in turn,
+-- and return the resulting accumulated substitution.
+applyPhonixRules :: String -> String
+applyPhonixRules = 
+  flip (foldl' (flip $ uncurry gSubst)) phonixRules . 
+    map toUpper . 
+    dropWhile (not . isAlpha)
