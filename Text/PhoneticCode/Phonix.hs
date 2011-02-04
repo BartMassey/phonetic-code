@@ -200,7 +200,7 @@ applyPhonixRules :: String -> String
 applyPhonixRules = 
   flip (foldl' res) phonixRulesREs .
     map toUpper . 
-    dropWhile (not . isAlpha)
+    filter isAlpha
   where
     res target (pat, subst) = subRegex pat target subst
 
