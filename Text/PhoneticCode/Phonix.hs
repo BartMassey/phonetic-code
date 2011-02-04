@@ -22,7 +22,8 @@
 
 module Text.PhoneticCode.Phonix (
   phonix, phonixCodes, 
-  phonixRules, applyPhonixRules )
+  phonixRules, phonixRulesPatSubsts, 
+  applyPhonixRules )
 where
 
 import Data.List
@@ -203,20 +204,28 @@ applyPhonixRules =
   where
     res target (pat, subst) = subRegex pat target subst
 
--- List of pattern/substitution pairs built from the
--- phonixRules .
+-- Compile a regex in single-line mode.
+mre :: String -> Regex
+mre s = mkRegexWithOpts s False True
+
+-- Compile the patterns in the patSubsts.
 phonixRulesREs :: [(Regex, String)]
 phonixRulesREs =
+  map (\(pat, subst) -> (mre pat, subst)) phonixRulesPatSubsts
+
+-- | List of pattern/substitution pairs built from the
+-- 'phonixRules'.
+phonixRulesPatSubsts :: [(String, String)]
+phonixRulesPatSubsts =
   map reFormat phonixRules
   where
-    mre s = mkRegexWithOpts s False True
     reFormat (src, dst) =
       let vowelSubst = mre "v"
           consSubst = mre "c"
           dotSubst = mre "\\." in
-      let src' = flip (subRegex dotSubst) "\\([A-Z]\\)" $
-                 flip (subRegex consSubst) "\\([BCDFGHJKLMNPQRSTVWXYZ]\\)" $
-                 flip (subRegex vowelSubst) "\\([AEIOU]\\)" $
+      let src' = flip (subRegex dotSubst) "([A-Z])" $
+                 flip (subRegex consSubst) "([BCDFGHJKLMNPQRSTVWXYZ])" $
+                 flip (subRegex vowelSubst) "([AEIOU])" $
                  src in
       let front = 
             case matchRegex (mre "^\\^?[^^A-Z]") src' of
@@ -231,4 +240,4 @@ phonixRulesREs =
                   _ -> "\\2"
               Nothing -> ""
               in
-      (mre src', front ++ dst ++ back)
+      (src', front ++ dst ++ back)
