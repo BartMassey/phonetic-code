@@ -1,6 +1,6 @@
 name: phonetic-code
-version: 0.1.1
-cabal-version: >= 1.2
+version: 0.1.1.1
+cabal-version: >= 1.10
 build-type: Simple
 license: BSD3
 license-file: COPYING
@@ -22,9 +22,20 @@ description:
 category: Text, Natural Language Processing
 tested-with: GHC == 6.8.3, GHC == 6.12.1
 
-exposed-modules: Text.PhoneticCode.Soundex, Text.PhoneticCode.Phonix
-build-depends: base >= 3 && < 5,
-	       containers >= 0.3 && < 1,
-	       array >= 0.3 && < 1,
-	       regex-compat >= 0.93 && < 2
-ghc-options: -Wall
+library
+  exposed-modules: Text.PhoneticCode.Soundex, Text.PhoneticCode.Phonix
+  build-depends: base >= 3 && < 5,
+                 containers >= 0.3 && < 1,
+                 array >= 0.3 && < 1,
+                 regex-compat >= 0.93 && < 2
+  ghc-options: -Wall
+  default-language: Haskell2010
+
+source-repository head
+  type: git
+  location: https://github.com/BartMassey/phonetic-code.git
+
+source-repository this
+  type: git
+  location: https://github.com/BartMassey/phonetic-code.git
+  tag: v0.1.1.1

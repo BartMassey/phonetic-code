@@ -13,12 +13,12 @@
 --
 --  This implementation is based on a number of sources,
 --  including a description of soundex at
---    http://wikipedia.org/wiki/Soundex
+--  <http://wikipedia.org/wiki/Soundex>
 --  and in Knuth's "The Art of Computer Programming" 2nd ed
 --  v1 pp394-395.  A very helpful reference on the details
 --  and differences among soundex algorithms is "Soundex:
 --  The True Story",
---    http://west-penwith.org.uk/misc/soundex.htm
+--  <http://west-penwith.org.uk/misc/soundex.htm>
 --  accessed 11 September 2008.
 --
 --  This code was originally written for the "thimk" spelling suggestion
